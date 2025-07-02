@@ -29,6 +29,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = '/static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 3 * 1024 * 1024  # 3MB limit
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
