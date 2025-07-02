@@ -1,0 +1,31 @@
+
+---
+
+## ✅ **.gitignore**
+
+```gitignore
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+instance/
+.env
+.env.*
+*.log
+
+# VSCode
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Vercel
+.vercel
+
+# PyCharm
+.idea/
+
+# Byte-compiled
+*.pyo
+*.pyd
+*.pyc
