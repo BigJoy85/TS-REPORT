@@ -9,7 +9,7 @@ from flask import make_response
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from io import BytesIO
-from supabase import create_client, 
+from supabase import create_client
 from functools import wraps
 from flask import abort
 
