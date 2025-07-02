@@ -13,8 +13,12 @@ from supabase import create_client,
 from functools import wraps
 from flask import abort
 
-SUPABASE_URL = "https://bfxjiezskmdzcbqggirw.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmeGppZXpza21kemNicWdnaXJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0Mjc1ODYsImV4cCI6MjA2NzAwMzU4Nn0.E5a0vsnCk98pg3e987Q-J04Ix5gep6DA6VrBjTVCVzg"
+from dotenv import load_dotenv
+load_dotenv()
+
+
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
@@ -24,8 +28,8 @@ app = Flask(__name__)
 # ========================
 # Konfigurasi Aplikasi
 # ========================
-app.config['SECRET_KEY'] = 'rahasia123'  # Ganti dengan secret key aman
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:e3hMjGJDTry4GnvD@db.bfxjiezskmdzcbqggirw.supabase.co:5432/postgres'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Konfigurasi Upload File
