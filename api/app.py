@@ -133,6 +133,11 @@ def tambah_laporan():
         longitude = request.form.get('longitude')
         file = request.files.get('foto')
 
+        # 🔷 Verifikasi sederhana
+        if checklist not in ['ok', 'tidak']:
+            flash('Checklist harus Ok atau Tidak')
+            return redirect(url_for('tambah_laporan')
+
         foto_url = None
         if file and allowed_file(file.filename):
             filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
