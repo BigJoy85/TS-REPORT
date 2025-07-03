@@ -8,9 +8,7 @@ from reportlab.pdfgen import canvas
 from io import BytesIO
 from supabase import create_client, Client
 from functools import wraps
-from datetime import datetime
-import uuid
-import os
+import uuid, os
 from dotenv import load_dotenv
 
 # ============================
@@ -29,11 +27,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = '/tmp/uploads'   # 🧹 Wajib pakai /tmp di Vercel
-app.config['MAX_CONTENT_LENGTH'] = 3 * 1024 * 1024  # 3MB limit
+app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
+app.config['MAX_CONTENT_LENGTH'] = 3 * 1024 * 1024
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-# Pastikan folder /tmp/uploads ada
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db.init_app(app)
@@ -98,9 +95,6 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# ============================
-# Admin Dashboard
-# ============================
 @app.route('/admin')
 @admin_required
 def admin_dashboard():
@@ -114,9 +108,6 @@ def view_user_laporan(user_id):
     laporan_list = Laporan.query.filter_by(user_id=user.id).all()
     return render_template('view_user_laporan.html', user=user, laporan_list=laporan_list)
 
-# ============================
-# CRUD Laporan
-# ============================
 @app.route('/laporan')
 @login_required
 def laporan():
@@ -129,11 +120,12 @@ def tambah_laporan():
     if request.method == 'POST':
         judul = request.form['judul']
         isi = request.form['isi']
+        checklist = request.form.get('checklist')
+        catatan = request.form.get('catatan')
         latitude = request.form.get('latitude')
         longitude = request.form.get('longitude')
         file = request.files.get('foto')
 
-        # 🔷 Verifikasi sederhana
         if checklist not in ['ok', 'tidak']:
             flash('Checklist harus Ok atau Tidak')
             return redirect(url_for('tambah_laporan'))
@@ -151,6 +143,8 @@ def tambah_laporan():
         laporan = Laporan(
             judul=judul,
             isi=isi,
+            checklist=checklist,
+            catatan=catatan,
             foto=foto_url,
             latitude=latitude,
             longitude=longitude,
@@ -174,11 +168,13 @@ def edit_laporan(id):
     if request.method == 'POST':
         laporan.judul = request.form['judul']
         laporan.isi = request.form['isi']
+        laporan.checklist = request.form.get('checklist')
+        laporan.catatan = request.form.get('catatan')
         laporan.latitude = request.form.get('latitude')
         laporan.longitude = request.form.get('longitude')
         file = request.files.get('foto')
 
-         if laporan.checklist not in ['ok', 'tidak']:
+        if laporan.checklist not in ['ok', 'tidak']:
             flash('Checklist harus Ok atau Tidak')
             return redirect(url_for('edit_laporan', id=id))
 
@@ -218,14 +214,10 @@ def hapus_laporan(id):
     flash('Laporan berhasil dihapus')
     return redirect(url_for('laporan'))
 
-# ============================
-# Export PDF
-# ============================
 @app.route('/laporan/export/pdf')
 @login_required
 def export_pdf():
     data = Laporan.query.filter_by(user_id=current_user.id).order_by(Laporan.tanggal.desc()).all()
-
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
@@ -246,7 +238,13 @@ def export_pdf():
         p.drawString(60, y, f"Tanggal: {item.tanggal.strftime('%d-%m-%Y %H:%M')}")
         y -= 15
         p.drawString(60, y, f"Isi: {item.isi}")
-        y -= 40
+        y -= 15
+        p.drawString(60, y, f"Checklist: {item.checklist}")
+        y -= 15
+        if item.catatan:
+            p.drawString(60, y, f"Catatan: {item.catatan}")
+            y -= 15
+        y -= 20
 
     p.save()
     buffer.seek(0)
@@ -256,17 +254,11 @@ def export_pdf():
         'Content-Disposition': 'attachment; filename=laporan.pdf'
     })
 
-# ============================
-# Error handling
-# ============================
 @app.errorhandler(413)
 def too_large(e):
     flash('File terlalu besar! Maksimum 3MB.')
     return redirect(request.url)
 
-# ============================
-# Run (Local Only)
-# ============================
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
