@@ -178,6 +178,10 @@ def edit_laporan(id):
         laporan.longitude = request.form.get('longitude')
         file = request.files.get('foto')
 
+         if laporan.checklist not in ['ok', 'tidak']:
+        flash('Checklist harus Ok atau Tidak')
+        return redirect(url_for('edit_laporan', id=id))
+
         if file and allowed_file(file.filename):
             filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
             file_data = file.read()
