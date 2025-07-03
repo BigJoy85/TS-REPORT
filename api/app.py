@@ -136,7 +136,7 @@ def tambah_laporan():
         # 🔷 Verifikasi sederhana
         if checklist not in ['ok', 'tidak']:
             flash('Checklist harus Ok atau Tidak')
-            return redirect(url_for('tambah_laporan')
+            return redirect(url_for('tambah_laporan'))
 
         foto_url = None
         if file and allowed_file(file.filename):
@@ -179,8 +179,8 @@ def edit_laporan(id):
         file = request.files.get('foto')
 
          if laporan.checklist not in ['ok', 'tidak']:
-        flash('Checklist harus Ok atau Tidak')
-        return redirect(url_for('edit_laporan', id=id))
+            flash('Checklist harus Ok atau Tidak')
+            return redirect(url_for('edit_laporan', id=id))
 
         if file and allowed_file(file.filename):
             filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
