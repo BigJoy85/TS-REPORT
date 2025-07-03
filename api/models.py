@@ -19,6 +19,8 @@ class Laporan(db.Model):
     foto = db.Column(db.String(300))  # URL foto dari Supabase Storage
     latitude = db.Column(db.String(100))
     longitude = db.Column(db.String(100))
+    checklist = db.Column(db.String(10), nullable=False, default='ok')  # ok/tidak
+    catatan = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
