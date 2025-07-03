@@ -116,6 +116,19 @@ def view_user_laporan(user_id):
     laporan_list = Laporan.query.filter_by(user_id=user.id).all()
     return render_template('view_user_laporan.html', user=user, laporan_list=laporan_list)
 
+@app.route('/admin/user/<int:user_id>/hapus', methods=['POST'])
+@admin_required
+def hapus_user(user_id):
+    user = User.query.get_or_404(user_id)
+    if user.role == 'admin':
+        flash("Tidak bisa menghapus akun admin lain!", "danger")
+        return redirect(url_for('admin_dashboard'))
+
+    db.session.delete(user)
+    db.session.commit()
+    flash(f"User {user.username} berhasil dihapus.", "success")
+    return redirect(url_for('admin_dashboard'))
+
 @app.route('/laporan')
 @login_required
 def laporan():
