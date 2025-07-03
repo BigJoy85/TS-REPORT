@@ -29,10 +29,12 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-app.config['UPLOAD_FOLDER'] = '/static/uploads'
+app.config['UPLOAD_FOLDER'] = '/tmp/uploads'   # 🧹 Wajib pakai /tmp di Vercel
 app.config['MAX_CONTENT_LENGTH'] = 3 * 1024 * 1024  # 3MB limit
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+# Pastikan folder /tmp/uploads ada
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db.init_app(app)
 bcrypt = Bcrypt(app)
@@ -71,7 +73,6 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
-
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user)
             return redirect(url_for('home'))
@@ -84,14 +85,11 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = bcrypt.generate_password_hash(request.form['password']).decode('utf-8')
-
         user = User(username=username, password=password, role='user')
         db.session.add(user)
         db.session.commit()
-
         flash('Akun berhasil dibuat, silakan login')
         return redirect(url_for('login'))
-
     return render_template('register.html')
 
 @app.route('/logout')
@@ -139,13 +137,10 @@ def tambah_laporan():
         if file and allowed_file(file.filename):
             filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
             file_data = file.read()
-
             response = supabase.storage.from_('uploads').upload(f'uploads/{filename}', file_data)
-
             if response.get('error'):
                 flash('Gagal upload file ke Supabase Storage')
                 return redirect(url_for('laporan'))
-
             foto_url = supabase.storage.from_('uploads').get_public_url(f'uploads/{filename}')
 
         laporan = Laporan(
@@ -158,7 +153,6 @@ def tambah_laporan():
         )
         db.session.add(laporan)
         db.session.commit()
-
         flash('Laporan berhasil ditambahkan')
         return redirect(url_for('laporan'))
 
@@ -182,13 +176,10 @@ def edit_laporan(id):
         if file and allowed_file(file.filename):
             filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
             file_data = file.read()
-
             response = supabase.storage.from_('uploads').upload(f'uploads/{filename}', file_data)
-
             if response.get('error'):
                 flash('Gagal upload file ke Supabase Storage')
                 return redirect(url_for('laporan'))
-
             foto_url = supabase.storage.from_('uploads').get_public_url(f'uploads/{filename}')
             laporan.foto = foto_url
 
