@@ -70,16 +70,18 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
+        
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user)
             if user.role == 'admin':
                 return redirect(url_for('admin_dashboard'))
             else:
                 return redirect(url_for('home'))
-          else:
+        else:
             flash('Username atau password salah')
-    return render_template('login.html')
 
+    return render_template('login.html')
+    
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
