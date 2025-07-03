@@ -1,0 +1,25 @@
+<h1>Laporan Semua Tim</h1>
+
+<a href="{{ url_for('laporan_tim_pdf') }}">Export PDF</a>
+
+
+<table border="1">
+<thead>
+<tr>
+<th>No</th><th>Judul</th><th>Isi</th><th>Checklist</th><th>Catatan</th><th>Tanggal</th><th>User</th>
+</tr>
+</thead>
+<tbody>
+{% for idx, laporan in enumerate(laporan_list, start=1) %}
+<tr>
+<td>{{ idx }}</td>
+<td>{{ laporan.judul }}</td>
+<td>{{ laporan.isi }}</td>
+<td>{{ laporan.checklist }}</td>
+<td>{{ laporan.catatan }}</td>
+<td>{{ laporan.tanggal.strftime('%d-%m-%Y %H:%M') }}</td>
+<td>{{ laporan.user.username }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
