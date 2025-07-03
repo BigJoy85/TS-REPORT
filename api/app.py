@@ -72,6 +72,10 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user)
+            if user.role == 'admin':
+                return redirect(url_for('admin_dashboard'))
+            else:
+                return redirect(url_for('home')
             return redirect(url_for('home'))
         else:
             flash('Username atau password salah')
