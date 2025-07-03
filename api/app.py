@@ -75,9 +75,8 @@ def login():
             if user.role == 'admin':
                 return redirect(url_for('admin_dashboard'))
             else:
-                return redirect(url_for('home')
-            return redirect(url_for('home'))
-        else:
+                return redirect(url_for('home'))
+          else:
             flash('Username atau password salah')
     return render_template('login.html')
 
