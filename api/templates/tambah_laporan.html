@@ -42,6 +42,20 @@ if ('serviceWorker' in navigator) {
             <div class="mb-3">
                 <textarea class="form-control" name="isi" rows="5" placeholder="Isi laporan" required>{{ laporan.isi if laporan else '' }}</textarea>
             </div>
+	   <!-- Checklist -->
+           <div class="mb-3">
+           <label for="checklist">Checklist</label>
+           <select class="form-select" name="checklist" id="checklist">
+           <option value="ok" {% if laporan and laporan.checklist == 'ok' %}selected{% endif %}>Ok</option>
+           <option value="tidak" {% if laporan and laporan.checklist == 'tidak' %}selected{% endif %}>Tidak</option>
+           </select>
+           </div>
+
+          <!-- Catatan -->
+          <div class="mb-3">
+          <label for="catatan">Catatan</label>
+          <textarea class="form-control" name="catatan" id="catatan" rows="3">{{ laporan.catatan if laporan else '' }}</textarea>
+          </div>
             <div class="mb-3">
                 <label>Upload Foto (max 3MB)</label>
                 <input type="file" class="form-control" name="foto" accept="image/*">
