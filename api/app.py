@@ -161,7 +161,7 @@ def tambah_laporan():
 @login_required
 def edit_laporan(id):
     laporan = Laporan.query.get_or_404(id)
-    if laporan.user_id != = 'admin':
+    if laporan.user_id != 'admin':
         flash('Hanya admin yang dapat mengedit laporan')
         return redirect(url_for('laporan'))
 
