@@ -101,12 +101,12 @@ def admin_dashboard():
     users = User.query.all()
     return render_template('admin_dashboard.html', users=users)
 
-@app.route('/admin/user/<int:user_id>/laporan')
+@app.route('/admin/laporan_tim')
 @admin_required
 def view_user_laporan(user_id):
     user = User.query.get_or_404(user_id)
-    laporan_list = Laporan.query.filter_by(user_id=user.id).all()
-    return render_template('view_user_laporan.html', user=user, laporan_list=laporan_list)
+    laporan_list = Laporan.query.order_by(Laporan.tanggal.desc()).all()
+    return render_template('laporan_tim.html', laporan_list=laporan_list)
 
 @app.route('/laporan')
 @login_required
