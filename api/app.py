@@ -103,11 +103,12 @@ def logout():
 # ============================
 # Admin Routes
 # ============================
-@app.route('/admin')
-@admin_required
+@app.route("/admin")
 def admin_dashboard():
-    users = User.query.all()
-    return render_template('admin_dashboard.html', users=users)
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+    laporan = supabase.table("laporan").select("*").order("tanggal", desc=True).execute()
+    return render_template("admin_dashboard.html", laporan=laporan.data)
 
 @app.route('/admin/user/<int:user_id>/laporan')
 @admin_required
