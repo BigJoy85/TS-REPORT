@@ -74,7 +74,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user)
             if user.role == 'admin':
-                return redirect(url_for('admin_dashboard'))
+                return redirect(url_for('admin_laporan'))
             else:
                 return redirect(url_for('home'))
         else:
