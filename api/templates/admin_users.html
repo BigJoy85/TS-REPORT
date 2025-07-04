@@ -8,24 +8,40 @@
 <body>
 <div class="container mt-4">
 <h1>Admin Dashboard - Users</h1>
+
 <a href="{{ url_for('admin_laporan') }}" class="btn btn-secondary btn-sm">Lihat Laporan</a>
+
 <div class="card mt-4">
 <div class="card-header">Daftar Pengguna</div>
 <div class="card-body">
 <table class="table table-bordered table-hover">
 <thead>
-<tr><th>ID</th><th>Username</th><th>Role</th><th>Action</th></tr>
+<tr>
+<th>ID</th>
+<th>Username</th>
+<th>Role</th>
+<th>Action</th>
+</tr>
 </thead>
 <tbody>
 {% for user in users %}
 <tr>
 <td>{{ user.id }}</td>
 <td>{{ user.username }}</td>
-<td>{% if user.role == 'admin' %}<span class="badge bg-danger">Admin</span>{% else %}<span class="badge bg-secondary">User</span>{% endif %}</td>
 <td>
-<a href="#" class="btn btn-info btn-sm">Lihat Laporan</a>
+{% if user.role == 'admin' %}
+<span class="badge bg-danger">Admin</span>
+{% else %}
+<span class="badge bg-secondary">User</span>
+{% endif %}
+</td>
+<td>
+<a href="{{ url_for('view_user_laporan', user_id=user.id) }}" class="btn btn-info btn-sm">Lihat Laporan</a>
+
 {% if user.role != 'admin' %}
-<button class="btn btn-danger btn-sm">Hapus</button>
+<form method="post" action="{{ url_for('hapus_user', user_id=user.id) }}" style="display:inline;" onsubmit="return confirm('Yakin ingin hapus user {{ user.username }}?');">
+  <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+</form>
 {% endif %}
 </td>
 </tr>
@@ -34,6 +50,7 @@
 </table>
 </div>
 </div>
+
 <a href="{{ url_for('logout') }}" class="btn btn-warning mt-3">Logout</a>
 </div>
 </body>
