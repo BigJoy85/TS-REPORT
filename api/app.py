@@ -103,6 +103,18 @@ def logout():
 # ============================
 # Admin Routes
 # ============================
+@app.route("/admin/users")
+@admin_required
+def admin_users():
+    users = User.query.all()
+    return render_template("admin_users.html", users=users)
+
+@app.route("/admin/laporan")
+@admin_required
+def admin_laporan():
+    laporan = Laporan.query.order_by(Laporan.tanggal.desc()).all()
+    return render_template("admin_laporan.html", laporan=laporan)
+    
 @app.route("/admin")
 def admin_dashboard():
     if session.get("role") != "admin":
